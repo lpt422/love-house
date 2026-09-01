@@ -1,0 +1,283 @@
+/* ============================================================
+   我们的恋爱小屋 · 自定义样式
+   （Tailwind 负责布局，这里负责动效与少量重复样式）
+============================================================ */
+
+/* 全局字体与背景 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+  background: linear-gradient(160deg, #fff1f2 0%, #fce7f3 45%, #fdf2f8 100%);
+  background-attachment: fixed;
+}
+
+/* ---------- 漂浮爱心背景 ---------- */
+#hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+#hearts span {
+  position: absolute;
+  bottom: -50px;
+  opacity: 0.45;
+  animation-name: floatUp;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes floatUp {
+  to {
+    transform: translateY(-110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ---------- 通用卡片 ---------- */
+.card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 1.5rem;
+  border: 1px solid #ffe4e6;
+  box-shadow: 0 1px 3px rgba(244, 114, 182, 0.08);
+}
+
+/* ---------- 输入框 ---------- */
+.input {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid #fecdd3;
+  background: #fff;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  color: #881337;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input:focus {
+  border-color: #f472b6;
+  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.18);
+}
+.input::placeholder {
+  color: #fda4af;
+}
+
+/* ---------- 按钮 ---------- */
+.btn-primary {
+  width: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #fb7185, #f472b6);
+  color: #fff;
+  padding: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(244, 114, 182, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(244, 114, 182, 0.45);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-soft {
+  border-radius: 1rem;
+  background: #ffe4e6;
+  color: #e11d48;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-soft:hover {
+  background: #fecdd3;
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  border-radius: 1rem;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #e11d48;
+  padding: 0.75rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-danger:hover {
+  background: #ffe4e6;
+}
+
+/* ---------- 配对页切换标签 ---------- */
+.pair-tab {
+  padding: 0.5rem 0;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #be123c;
+  transition: all 0.2s;
+}
+.pair-tab.active-tab {
+  background: #fff;
+  color: #e11d48;
+  box-shadow: 0 2px 10px rgba(244, 114, 182, 0.25);
+}
+
+/* ---------- 顶部 / 底部导航 ---------- */
+.nav-tab {
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  color: #be123c;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.nav-tab:hover {
+  background: #fff1f2;
+}
+.nav-tab.active-tab {
+  background: linear-gradient(135deg, #fb7185, #f472b6);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(244, 114, 182, 0.4);
+}
+
+.nav-tab-m {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 0.35rem 0.7rem;
+  border-radius: 9999px;
+  color: #f9a8d4;
+  transition: all 0.2s;
+}
+.nav-tab-m span:first-child {
+  transition: transform 0.2s;
+}
+.nav-tab-m.active-tab {
+  color: #e11d48;
+}
+.nav-tab-m.active-tab span:first-child {
+  transform: scale(1.18);
+}
+
+/* ---------- 成员头像 ---------- */
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2px solid #fff;
+  flex-shrink: 0;
+}
+
+/* ---------- 心情选择 ---------- */
+.mood-btn {
+  font-size: 1.25rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 0.8rem;
+  transition: all 0.15s;
+  filter: grayscale(0.6);
+  opacity: 0.6;
+}
+.mood-btn.selected {
+  filter: none;
+  opacity: 1;
+  background: #ffe4e6;
+  transform: scale(1.15);
+}
+
+/* ---------- 照片上传区 ---------- */
+.drop-zone {
+  display: block;
+  border: 2px dashed #fbcfe8;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: #f472b6;
+  font-size: 0.85rem;
+  background: #fff1f2;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.drop-zone:hover {
+  border-color: #f472b6;
+  background: #ffe4e6;
+}
+
+/* ---------- 留言气泡 ---------- */
+.msg-bubble {
+  padding: 0.65rem 1rem;
+  border-radius: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 2px 8px rgba(244, 114, 182, 0.12);
+}
+
+/* ---------- 灯箱淡入 ---------- */
+#lightbox {
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---------- 心跳动画 ---------- */
+.animate-heartbeat {
+  animation: heartbeat 1.4s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.12); }
+  40% { transform: scale(0.96); }
+  60% { transform: scale(1.08); }
+}
+
+/* ---------- 轻提示 ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translate(-50%, 20px);
+  background: rgba(255, 255, 255, 0.95);
+  color: #be123c;
+  border: 1px solid #fecdd3;
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  box-shadow: 0 8px 24px rgba(244, 114, 182, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s;
+  z-index: 100;
+  max-width: 86vw;
+  text-align: center;
+}
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* 自定义滚动条（可选） */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #fbcfe8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

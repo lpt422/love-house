@@ -1,0 +1,8 @@
+# 系统临时文件
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# 日志 / 缓存
+*.log
+node_modules/
