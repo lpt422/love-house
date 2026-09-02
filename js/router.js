@@ -1,11 +1,13 @@
 /**
- * 页面路由：首页 / 倒计时 / 日记 / 相册 / 纪念日 / 留言板
- * 顶部 tab 与底部 tab 共用 data-tab 切换
+ * 页面路由
+ * 主 Tab：home(首页) / checkin(打卡) / album(相册) / notes(日记·留言)
+ * 次页面：checkin-detail（打卡详情，不归属任何 Tab）
  */
 window.App = window.App || {};
 
 App.router = (function () {
-  var TABS = ['home', 'countdown', 'diary', 'photos', 'anniversary', 'message'];
+  var PRIMARY = ['home', 'checkin', 'album', 'notes'];
+  var SUB_OF = { 'checkin-detail': null };
   var current = 'home';
 
   function init() {
@@ -15,20 +17,18 @@ App.router = (function () {
   }
 
   function show(name) {
-    if (TABS.indexOf(name) < 0) name = 'home';
+    if (!document.getElementById('page-' + name)) name = 'home';
     current = name;
 
-    // 切换页面区块
     document.querySelectorAll('.page').forEach(function (p) { p.classList.add('hidden'); });
     var page = document.getElementById('page-' + name);
     if (page) page.classList.remove('hidden');
 
-    // 高亮导航按钮（顶栏 + 底栏一起处理）
+    var active = PRIMARY.indexOf(name) >= 0 ? name : (SUB_OF[name] || null);
     document.querySelectorAll('[data-tab]').forEach(function (b) {
-      b.classList.toggle('active-tab', b.dataset.tab === name);
+      b.classList.toggle('active-tab', b.dataset.tab === active);
     });
 
-    // 通知页面做"进入时"处理（例如倒计时页面刷新时间）
     var p = App.pages[name];
     if (p && p.onShow) { try { p.onShow(); } catch (e) { console.error(e); } }
 

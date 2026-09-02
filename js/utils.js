@@ -166,7 +166,7 @@ App.utils = (function () {
   function spawnHearts(count) {
     var wrap = document.getElementById('hearts');
     if (!wrap) return;
-    var emojis = ['💗', '💕', '💖', '🩷', '🌸'];
+    var emojis = ['🧭', '🌿', '✈️', '⛰️', '🏝️'];
     for (var i = 0; i < count; i++) {
       var s = document.createElement('span');
       s.textContent = emojis[i % emojis.length];
