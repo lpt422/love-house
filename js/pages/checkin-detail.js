@@ -5,6 +5,7 @@ App.pages = App.pages || {};
 App.pages['checkin-detail'] = (function () {
 
   var currentId = null;
+  var editingPhotos = false;   // 是否处于「编辑照片」模式
 
   function init() {
     document.getElementById('detail-edit').addEventListener('click', function () {
@@ -43,6 +44,13 @@ App.pages['checkin-detail'] = (function () {
       });
     });
 
+    // 编辑照片模式开关
+    document.getElementById('detail-edit-photos').addEventListener('click', function () {
+      editingPhotos = !editingPhotos;
+      this.textContent = editingPhotos ? '✅ 完成' : '✏️ 编辑';
+      render();
+    });
+
     // 照片点击：删除按钮删照片，其它区域看大图
     document.getElementById('detail-photos').addEventListener('click', function (e) {
       var del = e.target.closest('[data-photo-del]');
@@ -63,6 +71,9 @@ App.pages['checkin-detail'] = (function () {
 
   function open(id) {
     currentId = id;
+    editingPhotos = false;
+    var btn = document.getElementById('detail-edit-photos');
+    if (btn) btn.textContent = '✏️ 编辑';
     App.router.show('checkin-detail');
   }
 
