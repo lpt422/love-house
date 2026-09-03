@@ -106,11 +106,14 @@ App.pages['checkin-detail'] = (function () {
       box.innerHTML = '<p class="text-slate-400 text-sm col-span-full">还没有照片，点「添加照片」上传</p>';
     } else {
       box.innerHTML = photos.map(function (p) {
-        return '<div class="relative aspect-square rounded-2xl overflow-hidden bg-slate-100 group">' +
+        var del = editingPhotos
+          ? '<button type="button" data-photo-del="' + App.utils.esc(p.id) + '" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white text-xs flex items-center justify-center">✕</button>'
+          : '';
+        return '<div class="relative aspect-square rounded-2xl overflow-hidden bg-slate-100">' +
           '<button type="button" data-photo-url="' + App.utils.esc(p.dataUrl) + '" class="w-full h-full focus:outline-none">' +
             '<img src="' + App.utils.esc(p.dataUrl) + '" class="w-full h-full object-cover" alt="">' +
           '</button>' +
-          '<button type="button" data-photo-del="' + App.utils.esc(p.id) + '" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/55 text-white text-xs opacity-90">✕</button>' +
+          del +
         '</div>';
       }).join('');
     }
