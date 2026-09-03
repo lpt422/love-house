@@ -1,7 +1,7 @@
 /**
  * 首页：
  * 1) 顶部保留最初的情侣天数卡片 UI（问候语 + 在一起天数 + 情话）
- * 2) 下方是旅行打卡总览（纪念日由 anniversary.js 负责展示在首页）
+ * 2) 下方是旅行打卡总览：按城市去重点亮、城市目录卡片、中国地图
  */
 App.pages = App.pages || {};
 App.pages.home = (function () {
@@ -26,11 +26,10 @@ App.pages.home = (function () {
     });
 
     document.getElementById('home-city-list').addEventListener('click', function (e) {
-      var el = e.target.closest('[data-checkin-id]');
-      if (el) App.pages['checkin-detail'].open(el.dataset.checkinId);
+      var el = e.target.closest('[data-city]');
+      if (el) App.pages.city.open(el.dataset.city);
     });
 
-    // 情话卡片：点击换一句
     document.getElementById('btn-love-word').addEventListener('click', function () {
       var i;
       do { i = Math.floor(Math.random() * LOVE_WORDS.length); } while (i === curWord && LOVE_WORDS.length > 1);
@@ -45,21 +44,40 @@ App.pages.home = (function () {
 
   function onShow() { render(); }
 
+  /** 把打卡记录按城市名分组（同城市多条记录合并为一个点亮城市） */
+  function cityGroups() {
+    var map = {};
+    App.store.state.checkins.forEach(function (c) {
+      var key = (c.cityName || '').trim() || '未命名';
+      if (!map[key]) map[key] = [];
+      map[key].push(c);
+    });
+    return Object.keys(map).map(function (name) {
+      var list = map[name];
+      return {
+        cityName: name,
+        province: (list[0] && list[0].province) || '',
+        country: (list[0] && list[0].country) || '',
+        count: list.length,
+        checkins: list
+      };
+    });
+  }
+
   function render() {
     var s = App.store.state;
     if (!s.roomId) return;
 
     renderCoupleCard();
-    document.getElementById('home-city-count').textContent = s.checkins.length;
+    var groups = cityGroups();
+    document.getElementById('home-city-count').textContent = groups.length;
     document.getElementById('home-photo-count').textContent = s.photos.length;
-    renderCityList();
-    renderMap();
+    renderCityList(groups);
+    renderMap(groups);
   }
 
-  /** 顶部情侣天数卡片（保留原始 UI 与文案） */
   function renderCoupleCard() {
     var s = App.store.state;
-
     var other = s.members.find(function (m) { return m.id !== s.profile.id; });
     var myName = s.profile.name || '我';
     document.getElementById('home-greeting').textContent = other
@@ -85,42 +103,38 @@ App.pages.home = (function () {
     }
   }
 
-  /** 打卡城市卡片列表 */
-  function renderCityList() {
+  /** 城市目录卡片（一个城市一张卡片） */
+  function renderCityList(groups) {
     var box = document.getElementById('home-city-list');
-    var list = App.store.state.checkins;
-    if (!list.length) {
+    if (!groups.length) {
       box.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400">还没有点亮任何城市，点上方「新增打卡」开始记录吧 🧭</div>';
       return;
     }
-    box.innerHTML = list.map(function (c) {
-      var thumb = firstPhoto(c.id);
-      var place = [c.province, c.country].filter(Boolean).join(' · ');
-      return '<button type="button" data-checkin-id="' + App.utils.esc(c.id) + '" class="card p-3 text-left group">' +
+    box.innerHTML = groups.map(function (g) {
+      var thumb = groupPhoto(g);
+      var place = [g.province, g.country].filter(Boolean).join(' · ');
+      return '<button type="button" data-city="' + App.utils.esc(g.cityName) + '" class="card p-3 text-left group">' +
         '<div class="flex gap-3">' +
           '<div class="w-20 h-20 rounded-2xl overflow-hidden bg-sky-50 shrink-0 flex items-center justify-center">' +
             (thumb ? '<img src="' + App.utils.esc(thumb) + '" class="w-full h-full object-cover" alt="">' : '<span class="text-2xl">🏙️</span>') +
           '</div>' +
           '<div class="flex-1 min-w-0">' +
-            '<p class="font-semibold text-teal-700 truncate">📍 ' + App.utils.esc(c.cityName) + '</p>' +
+            '<p class="font-semibold text-teal-700 truncate">📍 ' + App.utils.esc(g.cityName) + '</p>' +
             '<p class="text-xs text-slate-400 mt-1 truncate">' + App.utils.esc(place || '') + '</p>' +
-            '<p class="text-xs text-slate-400 mt-1">🕐 ' + App.utils.esc(c.visitDate || '未填日期') + '</p>' +
+            '<p class="text-xs text-slate-400 mt-1">到访 ' + g.count + ' 次</p>' +
           '</div>' +
         '</div></button>';
     }).join('');
   }
 
-  /** 中国地图：已打卡城市高亮 */
-  function renderMap() {
+  function renderMap(groups) {
     var box = document.getElementById('home-map');
     var M = App.chinaMap;
     var W = M.W, H = M.H;
 
-    var visited = {};
     var litProvinces = {};
-    App.store.state.checkins.forEach(function (c) {
-      visited[c.cityName] = true;
-      var prov = c.province || (App.cityMap[c.cityName] && App.cityMap[c.cityName].province) || '';
+    groups.forEach(function (g) {
+      var prov = g.province || (App.cityMap[g.cityName] && App.cityMap[g.cityName].province) || '';
       if (prov) litProvinces[prov] = true;
     });
 
@@ -131,27 +145,31 @@ App.pages.home = (function () {
 
     var dots = [];
     App.cities.forEach(function (city) {
-      if (visited[city.name]) return;
+      if (groups.some(function (g) { return g.cityName === city.name; })) return;
       var pt = M.project(city.lon, city.lat);
       dots.push('<circle cx="' + pt.x + '" cy="' + pt.y + '" r="2.2" fill="#cbd5e1"/>');
     });
-    App.store.state.checkins.forEach(function (c) {
-      var lon = c.lon, lat = c.lat;
-      var cd = App.cityMap[c.cityName];
-      if ((lon == null || lat == null) && cd) { lon = cd.lon; lat = cd.lat; }
+    groups.forEach(function (g) {
+      var lon = null, lat = null;
+      var cd = App.cityMap[g.cityName];
+      if (cd) { lon = cd.lon; lat = cd.lat; }
+      if (lon == null) { var c0 = g.checkins[0]; lon = c0.lon; lat = c0.lat; }
       if (lon == null || lat == null) return;
       var pt = M.project(lon, lat);
       dots.push('<circle cx="' + pt.x + '" cy="' + pt.y + '" r="5" fill="#0d9488" stroke="#fff" stroke-width="1.5"/>');
-      dots.push('<text x="' + (pt.x + 7) + '" y="' + (pt.y + 3) + '" font-size="10" fill="#0f766e">' + App.utils.esc(c.cityName) + '</text>');
+      dots.push('<text x="' + (pt.x + 7) + '" y="' + (pt.y + 3) + '" font-size="10" fill="#0f766e">' + App.utils.esc(g.cityName) + '</text>');
     });
 
     box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="w-full h-auto">' + paths + dots.join('') + '</svg>';
   }
 
-  function firstPhoto(checkinId) {
-    var list = App.store.state.photos;
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].checkinId === checkinId) return list[i].dataUrl;
+  function groupPhoto(g) {
+    var photos = App.store.state.photos;
+    for (var i = 0; i < g.checkins.length; i++) {
+      var id = g.checkins[i].id;
+      for (var j = 0; j < photos.length; j++) {
+        if (photos[j].checkinId === id) return photos[j].dataUrl;
+      }
     }
     return null;
   }

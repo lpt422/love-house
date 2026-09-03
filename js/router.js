@@ -7,7 +7,7 @@ window.App = window.App || {};
 
 App.router = (function () {
   var PRIMARY = ['home', 'checkin', 'album', 'notes'];
-  var SUB_OF = { 'checkin-detail': null };
+  var SUB_OF = { 'checkin-detail': null, city: null };
   var current = 'home';
 
   function init() {

@@ -274,6 +274,11 @@ App.store = (function () {
       });
   }
 
+  /** 删除某张照片记录（Storage 文件暂不清理，避免误删） */
+  function removePhoto(id) {
+    return client().from(TABLE.photos).delete().eq('id', id);
+  }
+
   /* —— 离开房间：取消订阅，不删云端数据 —— */
   function cleanup() {
     var c = client();
@@ -293,6 +298,6 @@ App.store = (function () {
     state: state, on: on, emit: emit, init: init, cleanup: cleanup,
     createRoom: createRoom, joinRoom: joinRoom,
     write: write, remove: remove, update: update, updateRoom: updateRoom,
-    updateProfile: updateProfile, uploadPhoto: uploadPhoto
+    updateProfile: updateProfile, uploadPhoto: uploadPhoto, removePhoto: removePhoto
   };
 })();

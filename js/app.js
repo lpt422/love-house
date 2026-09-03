@@ -27,6 +27,7 @@ App.boot = function () {
   App.pages.home.init();
   App.pages.checkin.init();
   App.pages['checkin-detail'].init();
+  App.pages.city.init();
   App.pages.album.init();
 
   // 纪念日（首页置顶）+ 日记·留言

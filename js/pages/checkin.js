@@ -46,6 +46,19 @@ App.pages.checkin = (function () {
     App.router.show('checkin');
   }
 
+  /** 从城市目录进入新增，并预填城市名 */
+  function openNewForCity(cityName) {
+    App.router.show('checkin'); // onShow 会先重置
+    document.getElementById('checkin-city').value = cityName;
+    var c = App.cityMap[cityName];
+    if (c) {
+      document.getElementById('checkin-province').value = c.province;
+      document.getElementById('checkin-country').value = '中国';
+      matchedLon = c.lon;
+      matchedLat = c.lat;
+    }
+  }
+
   /** 打开编辑表单，回填数据 */
   function openEdit(id) {
     App.router.show('checkin'); // onShow 会先重置为新增
@@ -162,5 +175,5 @@ App.pages.checkin = (function () {
     });
   }
 
-  return { init: init, onShow: onShow, openNew: openNew, openEdit: openEdit };
+  return { init: init, onShow: onShow, openNew: openNew, openNewForCity: openNewForCity, openEdit: openEdit };
 })();
