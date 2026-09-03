@@ -276,7 +276,14 @@ App.store = (function () {
 
   /** 删除某张照片记录（Storage 文件暂不清理，避免误删） */
   function removePhoto(id) {
-    return client().from(TABLE.photos).delete().eq('id', id);
+    return client().from(TABLE.photos).delete().eq('id', id).then(function (res) {
+      if (res.error) throw res.error;
+      var i = indexOfId(state.photos, id);
+      if (i >= 0) state.photos.splice(i, 1);
+      emit('photos');
+      emit('all');
+      return res;
+    });
   }
 
   /* —— 离开房间：取消订阅，不删云端数据 —— */

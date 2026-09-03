@@ -58,7 +58,7 @@ App.pairing = (function () {
       localStorage.setItem(App.config.LS_PROFILE, JSON.stringify(profile));
       // 进入房间并挂载实时监听
       App.store.init(room.id, key, profile);
-      App.router.show('home');
+      App.router.show('home', { replace: true });
       App.showApp();
       // 弹出"把密钥发给 TA"
       document.getElementById('share-key').textContent = key;
@@ -89,7 +89,7 @@ App.pairing = (function () {
         localStorage.setItem(App.config.LS_ROOM_KEY, key);
         localStorage.setItem(App.config.LS_PROFILE, JSON.stringify(profile));
         App.store.init(room.id, key, profile);
-        App.router.show('home');
+        App.router.show('home', { replace: true });
         App.showApp();
       }).catch(function (err) {
         console.error(err);

@@ -99,7 +99,7 @@ App.pages['checkin-detail'] = (function () {
           '<button type="button" data-photo-url="' + App.utils.esc(p.dataUrl) + '" class="w-full h-full focus:outline-none">' +
             '<img src="' + App.utils.esc(p.dataUrl) + '" class="w-full h-full object-cover" alt="">' +
           '</button>' +
-          '<button type="button" data-photo-del="' + App.utils.esc(p.id) + '" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/55 text-white text-xs opacity-0 group-hover:opacity-100 transition">✕</button>' +
+          '<button type="button" data-photo-del="' + App.utils.esc(p.id) + '" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/55 text-white text-xs opacity-90">✕</button>' +
         '</div>';
       }).join('');
     }

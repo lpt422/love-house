@@ -52,7 +52,7 @@ App.boot = function () {
         if (ok) {
           App.store.init(roomId, roomKey, profile);
           App.showApp();
-          App.router.show('home');
+          App.router.show('home', { replace: true });
           return;
         }
         App.utils.toast('请先在 js/config.js 配置 Supabase');
